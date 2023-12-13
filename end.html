@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-image: url(back.jpg);
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #typing-text {
+            white-space: pre-line;
+            text-align: center;
+            overflow: hidden;
+            margin: 0;
+            font-size: 24px;
+            z-index: 999;
+            color: white;
+        }
+
+        #star {
+            width: 180px;
+            height: auto;
+            position: fixed;
+            top: 400px;
+            left: 700px;
+        }
+    </style>
+    <title>마지막</title>
+</head>
+<body>
+    <h1 id="typing-text"></h1>
+    <img id="star" src="ehwkd.png" alt="Image Description">
+    <p>
+        <script>
+        function showResults() {
+            // 각 테스트의 정답 개수를 불러와서 합산
+            var openingCorrectCount = parseInt(localStorage.getItem('openingCorrectCount')) || 0;
+            var strCorrectCount = parseInt(localStorage.getItem('strCorrectCount')) || 0;
+            var rspCorrectCount = parseInt(localStorage.getItem('rspCorrectCount')) || 0;
+            var rememCorrectCount = parseInt(localStorage.getItem('rememCorrectCount')) || 0;
+
+            var totalCorrectCount = openingCorrectCount + strCorrectCount + rspCorrectCount + rememCorrectCount;
+            
+            var nickname = localStorage.getItem('nickname');
+
+            var textElement = document.getElementById('typing-text');
+            var textToType = `수고하셨습니다!\n${nickname}님은 ${totalCorrectCount}점으로 뇌가 한층 더 말랑해졌어요.\n\n뇌가 굳지 않도록 말랑말랑한 뇌를 유지해보세요!`;
+
+            typeText(textToType);
+        }
+
+        function typeText(textToType) {
+            var textElement = document.getElementById('typing-text');
+            var index = 0;
+
+            function type() {
+                if (index < textToType.length) {
+                    textElement.textContent += textToType.charAt(index);
+                    index++;
+                    setTimeout(type, 100);
+                }
+            }
+
+            type();
+        }
+
+        window.onload = function () {
+            showResults();
+        };
+    </script>
+    </p>
+</body>
+</html>

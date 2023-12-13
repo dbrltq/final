@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {background-image: url(bg2.png); background-size: cover; background-attachment: fixed; padding-top: 80px;}
+        #display {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #image {width: 500px; height: auto;}
+        #choices {display: flex; justify-content: center; margin-top: 20px;}
+        .choice {margin: 0 10px; cursor: pointer; width: 300px; height: auto;}
+        p {margin: 50px;}
+        .do {font-size: 1.5rem; font-weight: bold;}
+        .rsp {width: 1200px; height: 600px; margin: 0 auto; border: 2px solid #888888; border-radius: 40px; background-color: white;}
+        #word {font-size: 15pt}
+        #result {}
+        #timerBar {
+            height: 20px;
+            background-color: #7e69c1; 
+            margin-top: 10px;
+            width: 100%; 
+            direction: ltr;
+        }
+
+        .time {width: 800px;
+            margin-left: auto; 
+            margin-right: auto;}
+
+
+    </style>
+    <title>가위바위보 게임</title>
+</head>
+<body>
+
+<audio id="correctAudio" src="truth.mp3"></audio>
+<audio id="incorrectAudio" src="false.mp3"></audio>
+
+<div id="display">
+    <p class="do">제시된 명령어에 맞게 주먹, 가위, 보를 골라서 내세요!</p>
+    <div class="rsp">
+        <p id="word"></p>
+        <img id="image" alt="Random Image">
+    </div>
+    <p id="result"></p>
+    <div class="time">
+        <div id="timer"></div>
+        <div id="timerBar"></div>
+    </div>
+
+</div>
+
+<div id="choices">
+    <img src="rock.png" alt="Rock" class="choice" onclick="makeChoice('ro')">
+    <img src="scissors.png" alt="Scissors" class="choice" onclick="makeChoice('sc')">
+    <img src="paper.png" alt="Paper" class="choice" onclick="makeChoice('pa')">
+</div>
+
+<script>
+    var currentRound = 1;
+    var maxRounds = 5;
+
+    var count = 5;
+    var counter = setInterval(timer, 1000);
+
+    var timerDiv = document.getElementById("timer");
+    var correctAnswers = 0;
+
+
+    document.addEventListener("DOMContentLoaded", function () {startNewRound();});
+
+    function startNewRound() {
+    	count = 5;
+        var words = ["비겨라!", "이겨라!", "져라!"];
+        var images = ["paper.png", "scissor.png", "rock.png"];
+
+        var selectedWord = words[Math.floor(Math.random() * words.length)];
+        document.getElementById("word").textContent = selectedWord;
+
+        var selectedImage = images[Math.floor(Math.random() * images.length)];
+        document.getElementById("image").src = selectedImage;
+
+        document.getElementById("result").style.display = "none";
+
+        var timerBar = document.getElementById("timerBar");
+        var remainingPercentage = (count / 5) * 100; 
+
+        timerBar.style.width = remainingPercentage + "%";
+
+    }
+
+    function makeChoice(userChoice) {
+    var selectedWord = document.getElementById("word").textContent;
+    var randomImage = document.getElementById("image").src.split('/').pop();
+    var result = calculateResult(selectedWord, randomImage, userChoice);
+
+    if (result === "oo.png") {
+        document.getElementById("correctAudio").play();
+        correctAnswers++; // 정답일 때 정답 수 증가
+    } else {
+        document.getElementById("incorrectAudio").play();
+    }
+
+    document.getElementById("image").src = result === "oo.png" ? "oo.png" : "xx.png";
+
+    setTimeout(function(){
+        document.getElementById("result").style.display = "none";
+        if (currentRound < maxRounds) {
+            currentRound++;
+            startNewRound();
+        } else {
+            showGameResult(); // 게임 종료 시 결과 표시
+        }
+    }, 1500);
+}
+
+    function calculateResult(command, randomImage, userChoice) {
+        if (command.includes("이겨라!") && randomImage === "scissor.png" && userChoice === "ro") {
+            return "oo.png";
+        } else if (command.includes("이겨라!") && randomImage === "paper.png" && userChoice === "sc") {
+            return "oo.png";
+        } else if (command.includes("이겨라!") && randomImage === "rock.png" && userChoice === "pa") {
+            return "oo.png";
+        } else if (command.includes("비겨라!") && randomImage === "scissor.png" && userChoice === "sc") {
+            return "oo.png";
+        } else if (command.includes("비겨라!") && randomImage === "paper.png" && userChoice === "pa") {
+            return "oo.png";
+        } else if (command.includes("비겨라!") && randomImage === "rock.png" && userChoice === "ro") {
+            return "oo.png";
+        } else if (command.includes("져라!") && randomImage === "scissor.png" && userChoice === "pa") {
+            return "oo.png";
+        } else if (command.includes("져라!") && randomImage === "paper.png" && userChoice === "ro") {
+            return "oo.png";
+        } else if (command.includes("져라!") && randomImage === "rock.png" && userChoice === "sc") {
+            return "oo.png";
+        } else {
+            return "xx.png";
+        }
+    }
+
+
+	function showGameResult() {
+    	alert(`게임이 종료되었습니다! ${correctAnswers}개를 맞췄어요! \n 다음게임으로..`);
+        window.location.href = 'remem.html';
+    }
+
+    function updateTimerBar() {
+    var timerBar = document.getElementById("timerBar");
+    var remainingPercentage = (count / 5) * 100; 
+
+    timerBar.style.width = remainingPercentage + "%";
+    if (!isMusicPlaying) {
+                backgroundMusic.play();
+                isMusicPlaying = true;
+            }
+        }
+
+
+    function timer() {
+        count--;
+
+        if (count <= 0) {
+        clearInterval(counter);
+        // 타임 아웃 시 다음 라운드로 이동하는 로직 추가
+        if (currentRound < maxRounds) {
+            currentRound++;
+            startNewRound();
+            counter = setInterval(timer, 1000); // 새로운 라운드 시작 후 타이머 재설정
+        }
+    } else {
+        timerDiv.textContent = `${count}초`;
+        updateTimerBar();
+    }
+}
+    function checkAnswer() {
+        // 사용자의 정답 개수를 가져와서 1 증가시킨 후 다시 저장
+        var currentCorrectCount = parseInt(localStorage.getItem('rspCorrectCount')) || 0;
+        localStorage.setItem('rspCorrectCount', currentCorrectCount + 1);
+        
+        // 나머지 코드 생략
+    }
+</script>
+
+</body>
+</html>
